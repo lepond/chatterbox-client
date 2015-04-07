@@ -56,30 +56,46 @@ $(document).ready( function () {
   }); 
 
   var placeMessages = function (array) {
-  for (var i = array.length - 1; i > array.length - 21; i--) {
-    var message = array[i].text;
-    var username = array[i].username;
+  for (var i = 0; i < array.length; i++) {
+    var message = escapeHTML(String(array[i].text)); 
+    console.log(message);
+    var username = escapeHTML(String(array[i].username));
     var chatroom = array[i].roomname;
-    $('.chatroom div').prepend('div').text(username + ": " + message);
+    $('.chatroom').append('<div>'+username+ ': ' + message +'</div>');
   }
 };
 
+  var escapeHTML = function (string) {
+    var charCode;
+    for(var index = 0; index < string.length; index++) {
+      charCode = string.charCodeAt(index);
+      //if( (charCode >= 58 && charCode <= 64) ||
+      //  (charCode >= 33 && charCode <=47) ) {
+      if(charCode >= 60 && charCode <=62 ) {
+        string = string.slice(0,index) + string.slice(index+1);
+      }
+    }
+    return string;
+  };
+
   var retrieveMessages = function () {
-    var message = $.ajax({
-      'url': 'https://api.parse.com/1/classes/chatterbox',
+    $.ajax({
+      'url': 'https://api.parse.com/1/classes/chatterbox', //'https://api.parse.com/1/classes/chatterbox',
       'type': 'GET',
-      //'data': JSON.stringify(data),
+      'data': {
+        'order': '-createdAt'
+      },
       'contentType': 'application/json',
       success: function (data) {
         console.log('Chatterbox: Messages Loaded');
+        placeMessages(data.results);
           },
       error: function (data) {
               // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to Load New Messages');
+      placeMessages(data.results)
             }
     });
-  console.log(message);
-    placeMessages(message.responseJSON.results);
   };
   
 
