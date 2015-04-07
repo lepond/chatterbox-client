@@ -65,6 +65,20 @@ $(document).ready( function () {
 };
 
   var retrieveMessages = function () {
+    var message = $.ajax({
+      'url': 'https://api.parse.com/1/classes/chatterbox',
+      'type': 'GET',
+      //'data': JSON.stringify(data),
+      'contentType': 'application/json',
+      success: function (data) {
+        console.log('Chatterbox: Messages Loaded');
+          },
+      error: function (data) {
+              // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('chatterbox: Failed to Load New Messages');
+            }
+    });
+  console.log(message);
     placeMessages(message.responseJSON.results);
   };
   
